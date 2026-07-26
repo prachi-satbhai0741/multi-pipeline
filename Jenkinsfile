@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Approve') {
             when {
-                expression { params.ENVIRONMENT == 'Approve' }
+                expression { params.ENVIRONMENT == 'production' }
             }
             steps {
                 input message: 'Deploy to production?'
