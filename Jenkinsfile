@@ -4,18 +4,38 @@ pipeline {
         choice(
             name: 'ENVIRONMENT',
             choices: ['staging', 'production'],
-            description: 'Environment'
+            description: 'Target environment'
         )
     }
-    stages {
+    environment {
+        APP_NAME = 'demo-app'
+    }
+     stages {
         stage('Build') {
             steps {
-                echo 'Building'
+                echo 'Building ${params.ENVIRONMENT}'
             }
         }
-        stage('Test') {
+        stage('Tests') {
+            parallel {
+                stage('Unit') {
+                    steps {
+                       sh 'echo Running unit tests'
+                    }
+                 }
+                 stage('Integration') {
+                    steps {
+                        sh 'echo Running intergration tests'
+                    }
+                }
+            }
+        }
+        stage('Approve') {
+            when {
+                expression { params.ENVIRONMENT == 'Approve' }
+            }
             steps {
-                echo 'Testing'
+                input message: 'Deploy to production?'
             }
         }
         stage('Deploy') {
@@ -26,10 +46,13 @@ pipeline {
     }
     post {
         success {
-            echo 'Build successful!'
+            echo 'successful!'
         }
         failure {
-            echo 'Build failed!'
+            echo 'failed!'
         }
     }
 }
+
+
+
