@@ -7,6 +7,9 @@ pipeline {
             description: 'Target environment'
         )
     }
+    environment {
+        APP_NAME = 'demo-app'
+    }
      stages {
         stage('Build') {
             steps {
